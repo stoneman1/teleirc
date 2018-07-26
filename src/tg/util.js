@@ -17,10 +17,19 @@ var argv = require('../arguments').argv;
 var chatIdsPath = path.dirname(argv.c || path.join(osHomedir(), '.teleirc', 'config.js'));
 var chatIdsFile = path.join(chatIdsPath, 'chatids.json');
 var ChatIds;
+
 try {
     ChatIds = JSON.parse(fs.readFileSync(chatIdsFile));
 } catch (e) {
     ChatIds = null;
+}
+
+var aliasesFile = path.join(osHomedir(), '.teleirc/aliases.json');
+var aliases;
+try {
+    aliases = JSON.parse(fs.readFileSync(aliasesFile))
+} catch (e) {
+    aliases = null;
 }
 
 function migrateChatIdStorage() {
@@ -78,6 +87,8 @@ exports.writeChatId = function(channel) {
 };
 
 exports.getName = function(user, config) {
+    console.log(user);
+    //aliases.forEach((alias) => console.log(alias));
     var name = config.nameFormat;
 
     if (user.title) { // channels
@@ -88,13 +99,16 @@ exports.getName = function(user, config) {
         // if user lacks username, use fallback format string instead
         name = name.replace('%username%', config.usernameFallbackFormat, 'g');
     }
-
     name = name.replace('%firstName%', user.first_name || '', 'g');
     name = name.replace('%lastName%', user.last_name || '', 'g');
 
     // get rid of leading and trailing whitespace
     name = name.replace(/(^\s*)|(\s*$)/g, '');
-
+    for (var key in aliases) {
+        if (key.toLowerCase() === name.toLowerCase()) {
+            name = aliases[key]
+        }
+    }
     if (config.nickcolor) {
         return nickcolor(name);
     }
