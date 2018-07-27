@@ -24,13 +24,22 @@ try {
     ChatIds = null;
 }
 
+
 var aliasesFile = path.join(osHomedir(), '.teleirc/aliases.json');
 var aliases;
 try {
-    aliases = JSON.parse(fs.readFileSync(aliasesFile))
+    aliases = JSON.parse(fs.readFileSync(aliasesFile));
 } catch (e) {
     aliases = null;
 }
+fs.watchFile(aliasesFile, function(curr, prev) {
+    console.log('loading changes from aliases file');
+    try {
+        aliases = JSON.parse(fs.readFileSync(aliasesFile));
+    } catch (e) {
+        aliases = null;
+    }
+});
 
 function migrateChatIdStorage() {
     ChatIds = {};
@@ -87,7 +96,6 @@ exports.writeChatId = function(channel) {
 };
 
 exports.getName = function(user, config) {
-    console.log(user);
     //aliases.forEach((alias) => console.log(alias));
     var name = config.nameFormat;
 
