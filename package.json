@@ -26,7 +26,7 @@
     "git-rev-sync": "^1.6.0",
     "imgur": "^0.2.0",
     "irc-colors": "^1.2.1",
-    "irc-framework": "git@github.com:lorkki/irc-framework.git#decode-with-fallback",
+    "irc-framework": "https://github.com:lorkki/irc-framework.git#decode-with-fallback",
     "lodash": "^4.12.0",
     "md5": "2.2.1",
     "mime": "^2.2.0",
